@@ -1,0 +1,4 @@
+# Ignore all contents of the listings and profiles folder
+listings/original/*
+listings/thumbnail/*
+profiles/*

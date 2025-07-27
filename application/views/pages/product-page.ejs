@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <%- include('../partials/header', { title: 'product-page' }) %>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x/dist/cdn.min.js" defer></script>
+    <title>product-page</title>
+
+    <script>
+      function listingDetailApp() {
+        return {
+          listing: {},
+          pictures: {},
+          user: {},
+          currentImageIndex: 0,
+
+          init() {
+            const pathParts = window.location.pathname.split('/');
+            const listingId = pathParts[pathParts.length - 1];
+
+            fetch(`/api/listing/${listingId}`)
+              .then(res => res.json())
+              .then(data => {
+                if (data.success) {
+                  this.listing = data.listing;
+                  this.user = data.user || {};
+                  this.pictures = data.pictures || [];
+                } else {
+                  console.error('Failed to fetch listing');
+                }
+              })
+              .catch(err => console.error('Error:', err));
+          },
+
+          formatPrice(price) {
+            if (!price) return '0.00';
+            return parseFloat(price).toFixed(2);
+          },
+          prevImage() {
+            if (this.pictures.length === 0) return;
+            this.currentImageIndex =
+              (this.currentImageIndex - 1 + this.pictures.length) % this.pictures.length;
+          },
+
+          nextImage() {
+            if (this.pictures.length === 0) return;
+            this.currentImageIndex = (this.currentImageIndex + 1) % this.pictures.length;
+          }
+        };
+      }
+
+    </script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 30px;
+        background-color: #f9f9f9;
+        color: #333;
+      }
+
+      .listing-detail-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 30px;
+        margin: 50px auto;
+        max-width: 1000px;
+      }
+
+      .listing-left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 40%;
+      }
+
+      .listing-image-container {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: 6px;
+        border: 2px solid black;
+        margin-bottom: 15px;
+      }
+
+      .listing-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .seller-info {
+        font-size: 1.25rem;
+        color: black;
+        text-align: center;
+      }
+
+      .listing-right {
+        width: 60%;
+      }
+
+      h1 {
+        margin-bottom: 15px;
+        font-size: 2rem;
+        color: #222;
+        word-wrap: break-word;
+      }
+
+      p {
+        font-size: 1.1rem;
+        line-height: 1.5;
+        color: #444;
+        margin: 10px 0;
+        word-wrap: break-word;
+      }
+
+      .price {
+        font-weight: bold;
+        font-size: 1.3rem;
+        margin: 15px 0;
+        color: #000;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .action-button {
+        background-color: #e6d5f5;
+        color: #333;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.2s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .action-button:hover {
+        background-color: #d6c1f0;
+      }
+
+      .description-box {
+        display: inline-block;
+        padding: 10px 15px;
+        border-radius: 6px;
+        background-color: #e6d5f5;
+        color: black;
+        max-width: 500px;
+        white-space: normal;
+        overflow-wrap: break-word;
+      }
+
+      .category-box {
+        display: inline-block;
+        padding: 10px 15px;
+        border-radius: 6px;
+        background-color: #e6d5f5;
+        color: black;
+        max-width: 100%;
+        white-space: nowrap;
+      }
+
+      .seller-profile-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .profile-picture {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: black 2px solid;
+      }
+
+      .nav-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #e6d5f5;
+        color: black;
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        font-size: 2rem;
+        cursor: pointer;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .nav-arrow.left {
+        left: 0px;
+      }
+
+      .nav-arrow.right {
+        right: 0px;
+      }
+
+      .nav-arrow:hover {
+        background: #7b5cff;
+        box-shadow: 0 4px 16px rgba(123, 92, 255, 0.25);
+      }
+    </style>
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHX65F1PNK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JHX65F1PNK');
+</script>
+
+<body>
+  <div class="listing-detail-container" x-data="listingDetailApp()" x-init="init()">
+    <!-- Left side: Image + Seller Info -->
+    <div class="listing-left">
+      <div class="listing-image-container" x-show="pictures.length > 0">
+        <button class="nav-arrow left" @click="prevImage" x-show="pictures.length > 1"><</button>
+
+        <img class="listing-image" :src="`/images/${pictures[currentImageIndex].originalName}`" alt="Listing Image" />
+
+        <button class="nav-arrow right" @click="nextImage" x-show="pictures.length > 1">></button>
+      </div>
+
+      <p x-text="`Image ${currentImageIndex + 1} of ${pictures.length}`"></p>
+
+      <div class="seller-profile-box">
+        <!-- Seller profile picture -->
+        <template x-if="listing.profile_picture">
+          <img class="profile-picture" :src="`/images/${listing.profile_picture}`" alt="Seller Profile Picture" />
+        </template>
+
+        <template x-if="!listing.profile_picture">
+          <div class="profile-picture"></div> <!-- fallback box if no image -->
+        </template>
+
+        <!-- Seller name -->
+        <p class="seller-info">
+          <strong>Seller:</strong>
+          <span
+            x-text="listing.firstName && listing.lastName ? `${listing.firstName} ${listing.lastName}` : 'Unknown Seller'"></span>
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Right side: All listing info -->
+    <div class="listing-right">
+      <h1>Item: <span x-text="listing.listing_name"></span></h1>
+
+      <p class="category-box">
+        <strong>Category:</strong>
+        <span x-text="listing.category_name || 'No category assigned'"></span>
+      </p>
+
+      <p class="description-box">
+        <strong>Description:</strong>
+        <span x-text="listing.listing_description || 'No description available.'"></span>
+      </p>
+
+      <p class="price">
+        Price: $<span x-text="formatPrice(listing.price)"></span>
+      </p>
+
+      <div class="action-buttons">
+       
+        <!-- Show only if category is 'Services' -->
+        <template x-if="listing.category_name === 'Services'">
+          <a :href="`/service/${listing.listing_id}/calendar`" class="action-button">
+            View Availability
+          </a>
+        </template>
+
+         <a :href="`/message/${listing.listing_id}`" class="action-button">Message Owner</a>
+        <a href="/results" class="action-button">Back to Results</a>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../partials/footer') %>
+</body>
+
+</html>

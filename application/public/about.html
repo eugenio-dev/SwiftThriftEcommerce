@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+
+    <link rel="stylesheet" href="\style.css">
+    
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHX65F1PNK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JHX65F1PNK');
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #1a1a1a; /* Greyish black background */
+      color: #fff; /* White text */
+    }
+  
+    .menu-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 22px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 1001;
+    }
+  
+    .menu-line {
+      width: 25px;
+      height: 2px;
+      background-color: #e6d5f5;
+      transition: transform 0.3s, opacity 0.3s, background-color 0.3s;
+    }
+  
+    .menu-button:hover .menu-line {
+      background-color: #FFD700;
+    }
+  
+    .dropdown {
+        display: none;
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 50vw; /* Half the screen width */
+        height: 100vh; /* Full screen height */
+        background-color: #e6d5f5; /* Light purple */
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+        padding: 40px;
+        z-index: 999;
+        overflow-y: auto;
+        transition: transform 0.3s ease;
+    }
+  
+    .dropdown.show {
+      display: block;
+    }
+  
+    .wrapper {
+        text-decoration: none;
+        color: black;
+        font-size: 30px;
+        font-weight: bold;
+    }
+  
+    .wrapper img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 10px;
+    }
+  
+    .text-container a {
+      text-decoration: none;
+      color: black;
+    }
+    .text-container a:hover {
+      color: #FFD700;
+      transition-duration: .2s;
+    }
+    
+  
+    .side-text {
+        position: absolute;
+        top: 30%;
+        left: 20vw;
+        transform: translate(-50%, -50%);
+        width: 50vw;
+        color: #e6d5f5;
+        font-size: 75px;
+        line-height: 1.2;
+        font-weight: bold;
+        text-align: center;
+    }
+
+  
+    .container h1 {
+      text-align: center;
+      margin-top: 100px;
+    }
+  
+    a[href="/"] {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+    }
+    .logo-container img {
+      width: 70px;
+    }
+  </style>
+  
+</head>
+<body>
+    <div class="logo-container">
+        <a href="/">
+          <img src="/images/SwiftThriftAlligator.png" alt="Swift Thrift Logo" />
+        </a>
+      </div>
+
+  <div class="side-text">
+    From<br>Gators<br>Who<br>Care
+  </div>
+
+  <!-- Styled Hamburger Button -->
+  <button class="menu-button" onclick="toggleDropdown()" aria-label="Menu">
+    <span class="menu-line"></span>
+    <span class="menu-line"></span>
+    <span class="menu-line"></span>
+  </button>
+
+  <!-- Dropdown Menu -->
+  <div id="dropdownMenu" class="dropdown">
+    <div class="wrapper">
+      <div class="text-container">
+        <a href="/ty.html">Meet Ty Bohlander</a>
+      </div>
+    </div>
+    <div class="wrapper">
+      <div class="text-container">
+        <a href="/eugenio.html">Meet Eugenio Ramirez</a>
+      </div>
+    </div>
+    <div class="wrapper">
+      <div class="text-container">
+        <a href="/julia.html">Meet Julia Bui</a>
+      </div>
+    </div>
+    <div class="wrapper">
+      <div class="text-container">
+        <a href="/michael.html">Meet Michael Tran</a>
+      </div>
+    </div>
+    <div class="wrapper">
+      <div class="text-container">
+        <a href="/prince.html">Meet Prince Santos</a>
+      </div>
+    </div>
+  </div>
+  <script>
+    function toggleDropdown() {
+      document.getElementById("dropdownMenu").classList.toggle("show");
+    }
+  </script>
+</body>
+</html>
+
+</html>

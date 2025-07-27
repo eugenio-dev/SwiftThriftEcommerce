@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%- include('../partials/header', { title: 'Category'}) %>
+    <title>Category Listings</title>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x/dist/cdn.min.js" defer></script>
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHX65F1PNK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JHX65F1PNK');
+</script>
+
+
+<!-- Generated CSS with gpt will change later -->
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 2rem;
+    color: #444;
+  }
+
+
+  .listings {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .listing {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-align: center;
+  }
+
+  .listing:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .listing h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+    word-wrap: break-word;
+  }
+
+  .listing p {
+    font-size: 1rem;
+    color: #666;
+    margin: 5px 0;
+    word-wrap: break-word;
+  }
+
+  .listing p:last-child {
+    font-weight: bold;
+    color: #000;
+  }
+
+
+  @media (max-width: 768px) {
+    .listings {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .listing {
+      width: 90%;
+    }
+  }
+</style>
+<!-- Grabs listing -->
+<body>
+  <h1>Listings for Category: <%= categoryName %></h1>
+  <div x-data='{ listings: <%= JSON.stringify(listings) %> }' class="listings">
+    <template x-for="listing in listings" :key="listing.listing_name">
+      <div class="listing">
+        <h2 x-text="listing.listing_name"></h2>
+        <p x-text="listing.listing_description"></p>
+        <p>Price: $<span x-text="listing.price"></span></p>
+      </div>
+    </template>
+  </div>
+
+  <%- include('../partials/footer') %> 
+</body>
+</html>

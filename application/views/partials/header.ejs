@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swift Thrift</title>
+  <script src="/search.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x/dist/cdn.min.js" defer></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+    }
+
+   .header {
+      width: 100%;
+      background-color: white;
+      box-shadow: 0 20px 20px rgba(0, 0, 0, 0.15);
+      position: relative;
+      z-index: 10;
+    }
+
+
+    .disclaimer {
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: bold;
+      padding: 0.5rem;
+    }
+
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0.75rem 1rem;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-container img {
+      width: 70px;
+    }
+
+    .menu-button {
+      background: none;
+      border: none;
+      margin-left: 1rem;
+      cursor: pointer;
+    }
+
+    .search-container {
+      flex: 1;
+      margin: 0 1rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: stretch;
+      border: 2px solid black;
+      border-radius: 9999px;
+      overflow: hidden;
+      background: white;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .category-select {
+      background-color: #d6c1f0;
+      font-weight: bold;
+      border: none;
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      border-right: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      padding: 0 1rem;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .search-button {
+      background-color: #d6c1f0;
+      border: none;
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .nav-icons {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .icon-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      transition: background 0.2s ease;
+      cursor: pointer;
+    }
+
+    .icon-button:hover {
+      background-color: #f3e8ff;
+    }
+
+    .icon-button svg {
+      width: 30px;
+      height: 30px;
+      stroke: #b19cd9;
+    }
+
+    .profile-dropdown {
+      position: relative;
+    }
+
+    .profile-menu {
+      position: absolute;
+      right: 0;
+      top: 45px;
+      background: #f3f3f1;
+      padding: 0.5rem 0.75rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      z-index: 1000;
+      min-width: 100px;
+    }
+
+    .profile-menu a,
+    .profile-menu button {
+      all: unset;
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+    }
+
+    .profile-menu a:hover,
+    .profile-menu button:hover {
+      background-color: #e5e0ec;
+    }
+
+    .search-button {
+      background-color: #d6c1f0;
+      border-radius: 0 1.5rem 1.5rem 0;
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: none; 
+      flex-direction: column;
+      gap: 6px;
+      padding: 0.5rem;
+      z-index: 1001;
+    }
+
+    .menu-line {
+      width: 25px;
+      height: 2px;
+      background-color: #e6d5f5;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    .menu-button:hover .menu-line {
+      background-color: #FFD700;
+    }
+
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .menu-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .menu-dropdown {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 300px;
+      height: 100vh;
+      background-color: #e8d293;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    .menu-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+
+    .menu-item {
+      font-weight: bold;
+      font-size: 1.2rem;
+      text-decoration: none;
+      color: #333;
+      padding: 0.8rem 0;
+      display: block;
+    }
+
+    .menu-item:hover {
+      color: white;
+    }
+
+    .menu-button-link {
+      padding: 0.8rem 1.5rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      border: none;
+      text-align: center;
+      width: 90%;
+    }
+
+    .signup-button, .login-button {
+      background: white;
+      color: black;
+      margin-bottom: 0.5rem;
+    }
+
+    .signup-button:hover, .login-button:hover {
+      background: black;
+      color: white;
+      text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+      .menu-button {
+        display: flex;
+      }
+
+      .search-container,
+      .nav-icons {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header" x-data="searchApp()">
+    <div class="disclaimer">
+      <p><strong>** "SFSU Software Engineering Project CSC 648-848, Spring 2025. For Demonstration Only” **</strong></p>
+    </div>
+  
+    <div class="header-container">
+      <!-- Hamburger menu + overlay -->
+      <div x-data="{ open: false }">
+        <button class="menu-button" @click="open = !open" aria-label="Menu">
+          <span class="menu-line"></span>
+          <span class="menu-line"></span>
+          <span class="menu-line"></span>
+        </button>
+  
+        <!-- Overlay -->
+        <div class="menu-overlay" :class="{ 'active': open }" @click="open = false"></div>
+  
+        <!-- Sidebar -->
+        <div class="menu-dropdown" x-show="open" x-collapse.duration.200ms @click.outside="open = false">
+          <button class="menu-close" @click="open = false">&times;</button>
+  
+          <!-- Categories -->
+          <div class="menu-content" style="margin-top: 3rem;">
+            <template x-for="category in categories" :key="category.id">
+              <a 
+                class="menu-item" 
+                :href="`/results?category=${category.id}`" 
+                x-text="category.name">
+              </a>
+            </template>
+          </div>
+  
+          <!-- Footer -->
+          <div class="menu-footer" style="margin-top: auto;">
+            <a href="/about.html" class="menu-item">About us</a>
+            <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 0.5rem;">
+              <% if (user) { %>
+                <a href="/inbox" class="menu-item">Inbox</a>
+                <a href="/profile" class="menu-item">Profile</a>
+                <form method="POST" action="/api/auth/logout">
+                  <button type="submit" class="menu-button-link login-button">Logout</button>
+                </form>
+              <% } else { %>
+                <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 0.5rem;">
+                  <a href="/signup" class="menu-button-link signup-button">Sign up</a>
+                  <a href="/login" class="menu-button-link login-button">Login</a>
+                </div>
+              <% } %>
+               
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Logo -->
+      <div class="logo-container">
+        <a href="/">
+          <img src="/images/SwiftThriftAlligator.png" alt="Swift Thrift Logo" />
+        </a>
+      </div>
+  
+      <!-- Search bar -->
+      <div class="search-container">
+        <div class="search-bar">
+          <select class="category-select" x-model="selectedCategory">
+            <option value="">All</option>
+            <template x-for="category in categories" :key="category.id">
+              <option :value="category.id" x-text="category.name"></option>
+            </template>
+          </select>
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Search..." 
+            x-model="searchQuery"
+            @keyup.enter="performSearch()" 
+          />
+          <button class="search-button" @click="performSearch()" aria-label="Search">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+  
+      <!-- Icons -->
+      <div class="nav-icons">
+        <% if (user) { %>
+          <!-- Inbox icon shown only when logged in -->
+          <a href="/inbox" class="icon-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+          </a>
+        <% } %>
+      
+     
+       
+  
+        <div class="profile-dropdown" x-data="{ open: false }" @click.outside="open = false">
+          <div class="icon-button" @click="open = !open">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+        
+          <div x-show="open" x-transition class="profile-menu">
+            <% if (user) { %>
+              <a href="/profile">Profile</a>
+              <form method="POST" action="/api/auth/logout">
+                <button type="submit">Logout</button>
+              </form>
+            <% } else { %>
+              <a href="/login">Login</a>
+              <a href="/signup">Sign up</a>
+            <% } %>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </header>
+  
+</body>
+</html>

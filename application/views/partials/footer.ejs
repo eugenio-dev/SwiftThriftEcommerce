@@ -1,0 +1,31 @@
+<body style="margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column;">
+  <div style="flex: 1;">
+    <!-- Your main content here -->
+    <div class="page-wrapper" x-data="calendarComponent()" x-init="fetchAvailability()">
+      <!-- ... calendar content ... -->
+    </div>
+  </div>
+
+  <!-- Footer stays here -->
+  <footer style="
+    background-color: #f3f3f3;
+    padding: 1.5rem;
+    text-align: center;
+    font-size: 1rem;
+    color: #333;
+    border-top: 1px solid #ddd;
+  ">
+    <div style="margin-bottom: 0.5rem; font-weight: bold;">
+      SwiftThrift
+    </div>
+    <div style="margin-top: 0.5rem;">
+      <a href="/about.html" style="
+        color: #7b5cff;
+        text-decoration: none;
+        font-weight: 500;
+      " onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+        About Us
+      </a>
+    </div>
+  </footer>
+</body>

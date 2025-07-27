@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%- include('../partials/header', { title: 'SwiftThrift' }) %>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+      /* --------------------
+        Global Styles
+      -------------------- */
+      body {
+        background-color: #fdfaf691;
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      /* --------------------
+        Banner Styling
+      -------------------- */
+      .banner {
+        width: 100%;
+        height: auto;
+        max-height: 400px;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      @media (max-width: 768px) {
+        .banner {
+          max-height: 250px;
+        }
+
+        .action-prompts {
+          flex-direction: column;
+          /* Stack prompts on mobile */
+        }
+      }
+
+      /* --------------------
+        Section Titles
+      -------------------- */
+      .featured-title {
+        padding-top: 50px;
+        text-align: center;
+      }
+
+      /* --------------------
+        Action Prompts (Sell / Buy boxes)
+      -------------------- */
+      .action-prompts {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin: 2rem auto;
+        padding: 1rem;
+        max-width: 1000px;
+      }
+
+      .prompt {
+        flex: 1;
+        background-color: #e5ca79;
+        color: #000000;
+        text-align: center;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        position: relative;
+      }
+
+      .prompt:hover {
+        background-color: #b8a1db;
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        color: #fff;
+      }
+
+      /* Make the entire prompt clickable by using a positioned anchor */
+      .prompt-link {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        text-decoration: none;
+        z-index: 1;
+        cursor: pointer;
+        border-radius: 8px; /* Match the prompt's border-radius */
+      }
+
+      /* Style the text inside prompts */
+      .prompt h2 {
+        position: relative;
+        z-index: 0;
+        margin-top: 0;
+      }
+
+      .prompt p {
+        position: relative;
+        z-index: 0;
+        margin-bottom: 0;
+      }
+
+      /* Hide the original text link */
+      .prompt p a {
+        opacity: 0;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
+
+      /* --------------------
+        Featured Listings Grid
+      -------------------- */
+      .featured-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .featured-card {
+        display: block;
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-decoration: none;
+        color: #333;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: 1px solid #ddd;
+      }
+
+      .featured-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        background-color: #b8a1db;
+      }
+
+      .featured-name {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #000000;
+      }
+
+      .featured-description {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 1rem;
+        min-height: 60px;
+      }
+
+      .featured-price {
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: #222;
+      }
+
+      .listing-image-container {
+        width: 100%;
+        height: 200px;
+        margin-bottom: 15px;
+        overflow: hidden;
+        border-radius: 6px;
+      }
+
+      .listing-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+
+      .listing:hover .listing-image {
+        transform: scale(1.05);
+      }
+    </style>
+</head>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHX65F1PNK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+
+  gtag('config', 'G-JHX65F1PNK');
+</script>
+
+<body>
+  <img src='/images/SwiftThirftBanner2.png' class='banner'>
+
+  <div class="action-prompts">
+    <div class="prompt sell">
+      <!-- Add a full-sized link that covers the entire prompt -->
+      <a href="/sell" class="prompt-link" aria-label="Post an item"></a>
+      <h2>Ready to sell?</h2>
+      <p>Post an item</p>
+      <!-- Keep the original link for accessibility, but hide it visually -->
+      <p><a href="/sell">Post an item</a></p>
+    </div>
+    <div class="prompt buy">
+      <!-- Add a full-sized link that covers the entire prompt -->
+      <a href="/results" class="prompt-link" aria-label="Browse listings"></a>
+      <h2>Find something good</h2>
+      <p>Browse listings</p>
+      <!-- Keep the original link for accessibility, but hide it visually -->
+      <p><a href="/results">Browse listings</a></p>
+    </div>
+  </div>
+
+  <h1 class="featured-title">Featured Items</h1>
+
+  <div x-data='{ listings: <%= JSON.stringify(listings) %> }' class="featured-grid">
+    <template x-for="listing in listings" :key="listing.listing_id">
+      <a :href="`/listing/${listing.listing_id}`" class="featured-card">
+        <div class="featured-content">
+          <h2 class="featured-name" x-text="listing.listing_name"></h2>
+          <p class="featured-description" x-text="listing.listing_description"></p>
+          <p class="featured-price">Price: $<span x-text="listing.price"></span></p>
+          <div class="listing-image-container">
+            <template x-if="listing.primary_image">
+              <img class="listing-image" :src="'/images/'+ listing.primary_image" :alt="listing.listing_name">
+            </template>
+            <template x-if="!listing.primary_image">
+              <div class="listing-image no-image">No image available</div>
+            </template>
+          </div>
+        </div>
+      </a>
+    </template>
+  </div>
+
+  <%- include('../partials/footer') %>
+</body>
+
+</html>

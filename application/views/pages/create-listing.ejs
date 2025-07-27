@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <%- include('../partials/header', { title: 'create-listing' }) %>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <style>
+    /* Scope all styles inside the listing-form-container class */
+    .listing-form-container {
+      font-family: sans-serif;
+      padding: 2rem;
+    }
+
+    .listing-form-container h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      text-align: center;
+      padding-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .listing-form-container h1 {
+        padding-top: 3rem;
+      }
+    }
+
+    .listing-form-container label {
+      font-weight: bold;
+      display: block;
+      margin-top: 2rem;
+      text-align: center;  
+      width: 100%;    
+    }
+
+    .listing-form-container .input-group-name {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .listing-form-container .input-group-description {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;    
+      padding: 1rem;
+    }
+
+    .listing-form-container input[type="text"],
+    .listing-form-container input[type="number"],
+    .listing-form-container textarea,
+    .listing-form-container select {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #ddd;
+      border: none;
+      border-radius: 4px;
+      margin-top: 0.25rem;
+      font-size: 1rem;
+    }
+
+    .listing-form-container .char-count {
+      position: absolute;
+      top: 50%;
+      right: 1rem;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .listing-form-container .image-upload-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 100px);
+      gap: 1rem;
+      margin-top: 1rem;
+      justify-content: center;
+    }
+
+    .listing-form-container .image-upload {
+      width: 100px;
+      height: 100px;
+      background: #ddd;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .listing-form-container .image-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .listing-form-container .image-upload-count {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: #555;
+      text-align: center;
+    }
+
+    .listing-form-container .remove-image {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+      z-index: 10;
+    }
+
+    .listing-form-container .form-footer {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center; /* Center button as per julia's changes */
+      gap: 1rem;
+    }
+
+    .listing-form-container .form-footer button {
+      background-color: #d6c1f0; /* Purple background from julia's branch */
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .listing-form-container .form-footer button:hover {
+      color: #a066d1; 
+      background-color: #ffffff;
+    }
+
+    .listing-form-container select {
+      padding: 0.75rem;
+      background-color: #ddd;
+      border: none;
+      border-radius: 4px;
+      margin-top: 0.25rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .listing-form-container .form-row {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center; 
+      text-align: center;
+    }
+
+    .listing-form-container .form-field-large {
+      flex: 0 1 auto; 
+      min-width: 500px;
+      max-width: 100%;
+    }
+
+    .listing-form-container .form-field-small {
+      flex: 0 1 auto;
+      min-width: 100px; 
+    }
+    
+    /* Banner can stay as is since it shouldn't interfere with header */
+    .banner {
+      position: absolute;
+      top: 400px;
+      right: 0;
+      width: 300px;
+      height: auto;
+      z-index: -1;
+    }
+
+    /* Center form and make it responsive - from julia's branch */
+    .listing-form-container .form-wrapper {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    /* Mobile-friendly layout from julia's branch */
+    @media (max-width: 768px) {
+      .listing-form-container .form-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .listing-form-container .form-field-large,
+      .listing-form-container .form-field-small {
+        width: 100%;
+        min-width: unset;
+      }
+
+      .listing-form-container .image-upload-grid {
+        grid-template-columns: repeat(2, 100px);
+      }
+    }
+  </style>
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHX65F1PNK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JHX65F1PNK');
+</script>
+
+<body>
+  <img src='/images/GatorSelling.png' class='banner'>
+  
+  <!-- Wrap all your listing form content in this container -->
+  <div class="listing-form-container">
+    <h1>Ready to sell?</h1>
+
+    <!-- Added form-wrapper div from julia's branch -->
+    <div class="form-wrapper">
+      <div x-data="listingForm()">
+        <form @submit.prevent="submitListing">
+          <div class="form-row">
+            <div class="form-field form-field-large">
+              <label>*Item name:</label>
+              <div class="input-group-name">
+                <input type="text" x-model="title" maxlength="75" required />
+                <div class="char-count" x-text="titleCount"></div>
+              </div>
+            </div>
+          
+            <div class="form-field-small">
+              <label>*Price</label>
+              <input type="number" x-model="price" min="0" required />
+            </div>
+          
+            <div class="form-field-small">
+              <label for="category">*Choose a category</label>
+              <select id="category" x-model="category" required>
+                <option value="" disabled selected>Select a category</option>
+                <template x-for="cat in categories" :key="cat.id">
+                  <option :value="cat.id" x-text="cat.name"></option>
+                </template>
+              </select>
+            </div>
+          </div>
+
+          <!-- Conditional Availability Fields for Services -->
+          <div x-show="isServiceCategory">
+            <label>Available Dates & Times</label>
+            <div class="form-row">
+              <input type="date" x-model="availableDate" />
+              <input type="time" x-model="startTime" />
+              <input type="time" x-model="endTime" />
+              <button type="button" @click="addAvailability">Add Slot</button>
+            </div>
+
+            <ul>
+              <template x-for="(slot, index) in availability" :key="index">
+                <li>
+                  <span x-text="slot.date + ' ' + slot.start + ' - ' + slot.end"></span>
+                  <button @click="removeAvailability(index)">Remove</button>
+                </li>
+              </template>
+            </ul>
+          </div>
+
+          <label>*Description:</label>
+          <div class="input-group-description">
+            <textarea x-model="description" maxlength="800" rows="5" required @input="updateDescCount()"></textarea>
+            <div class="char-count" x-text="descriptionCount"></div>
+          </div>
+
+          <label>*Add at least one picture</label>
+          <div class="image-upload-count" x-text="imageCountText"></div>
+          <div class="image-upload-grid">
+            <!-- For slots with images -->
+            <template x-for="(image, index) in imageSlots" :key="index">
+              <div class="image-upload" x-show="image.file">
+                <div class="remove-image" @click.prevent="removeImage(index)">×</div>
+                <img :src="image.preview" class="image-preview" />
+              </div>
+            </template>
+            
+            <!-- For empty slots, show + button -->
+            <template x-for="index in remainingSlots" :key="'empty-'+index">
+              <label class="image-upload">
+                +
+                <input 
+                  type="file" 
+                  @change="handleFileUpload($event)" 
+                  accept="image/*" 
+                  style="display: none;" 
+                />
+              </label>
+            </template>
+          </div>
+
+          <div class="form-footer">
+            <button type="submit" :disabled="!canSubmit">Create Listing</button>
+          </div>
+          
+          <p x-show="errorMessage" x-text="errorMessage" class="error"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function listingForm() {
+      return {
+        categories: [],
+        title: '',
+        price: '',
+        category: '',
+        description: '',
+        titleCount: '0/75',
+        descriptionCount: '0/800',
+        errorMessage: '',
+        imageSlots: [],  // Array to hold image data
+        maxImages: 5,    // Maximum number of images allowed
+        availableDate: '',
+        startTime: '',
+        endTime: '',
+        availability: [],
+
+        get isServiceCategory() {
+          return parseInt(this.category) === 3; 
+        },
+
+        get filledSlotCount() {
+          return this.imageSlots.filter(slot => slot.file).length;
+        },
+
+        get remainingSlots() {
+          return 5 - this.filledSlotCount;
+        },
+
+        get canSubmit() {
+          return this.filledSlotCount > 0;
+        },
+        
+        init() {
+          // Initialize empty image slots
+          this.imageSlots = Array(this.maxImages).fill().map(() => ({ file: null, preview: null }));
+
+          // Get categories to choose in the form
+          this.fetchCategories();
+          
+          // Watch for title changes
+          this.$watch('title', (value) => {
+            this.titleCount = `${value.length}/75`;
+          });
+        },
+
+        fetchCategories() {
+          console.log('Fetching categories...');
+          fetch('/api/categories')
+            .then(response => response.json())
+            .then(data => {
+              console.log('Categories loaded:', data);
+              this.categories = data;
+            })
+            .catch(error => {
+              console.error('Error fetching categories:', error);
+            });
+        },
+        
+        updateDescCount() {
+          this.descriptionCount = `${this.description.length}/800`;
+        },
+        
+        handleFileUpload(event) {
+          const file = event.target.files[0];
+          if (!file) return;
+          
+          // Find the first empty slot
+          const emptyIndex = this.imageSlots.findIndex(slot => !slot.file);
+          if (emptyIndex === -1) return; // No empty slots
+          
+          // Create preview URL
+          const preview = URL.createObjectURL(file);
+          
+          // Store file and preview
+          this.imageSlots[emptyIndex] = { file, preview };
+        },
+        
+        removeImage(index) {
+          // Release the object URL to avoid memory leaks
+          if (this.imageSlots[index].preview) {
+            URL.revokeObjectURL(this.imageSlots[index].preview);
+          }
+          
+          // Clear the slot
+          this.imageSlots[index] = { file: null, preview: null };
+        },
+        
+        get filledSlotCount() {
+          return this.imageSlots.filter(slot => slot.file).length;
+        },
+        
+        get remainingSlots() {
+          return this.maxImages - this.filledSlotCount;
+        },
+        
+        get imageCountText() {
+          return `${this.filledSlotCount}/${this.maxImages} images uploaded`;
+        },
+        
+        get canSubmit() {
+          return this.filledSlotCount > 0; // Require at least one image
+        },
+
+        addAvailability() {
+          if (this.availableDate && this.startTime && this.endTime) {
+            this.availability.push({
+              date: this.availableDate,
+              start: this.startTime,
+              end: this.endTime
+            });
+            this.availableDate = this.startTime = this.endTime = '';
+          }
+        },
+
+        removeAvailability(index) {
+          this.availability.splice(index, 1);
+        },
+        
+        submitListing() {
+          console.log("Submit function called");
+          
+          // Validate required fields
+          if (!this.title || !this.price || !this.category || !this.description) {
+            this.errorMessage = 'Please fill out all required fields';
+            return;
+          }
+          
+          if (this.filledSlotCount === 0) {
+            this.errorMessage = 'Please upload at least one image';
+            return;
+          }
+          
+          // Create FormData object correctly
+          const formData = new FormData();
+          
+          // Add text fields to FormData
+          formData.append('title', this.title);
+          formData.append('price', this.price);
+          formData.append('category', this.category);
+          formData.append('description', this.description);
+          formData.append('availability', JSON.stringify(this.availability));
+          
+          // Add images to FormData
+          let imageCount = 0;
+          this.imageSlots.forEach((slot, index) => {
+            if (slot.file) {
+              formData.append('images', slot.file);
+              formData.append('displayOrder', index.toString());
+              imageCount++;
+            }
+          });
+          
+          console.log("Image count being sent:", imageCount);
+          
+          fetch('/account/listing/create', {
+            method: 'POST',
+            body: formData // No content-type header, browser sets it automatically
+          })
+          .then(response => {
+            console.log("Response received:", response);
+            return response.json();
+          })
+          .then(data => {
+            console.log("Data received:", data);
+            if (data.success) {
+              window.location.href = '/listing-page';
+            } else {
+              this.errorMessage = data.message || 'Failed to create listing';
+            }
+          })
+          .catch(error => {
+            console.error("Fetch error:", error);
+            this.errorMessage = 'An error occurred';
+          });
+        }
+      };
+    }
+  </script>
+</body>
+</html>

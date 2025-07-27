@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <%- include('../partials/header', { title: 'Service Availability' }) %>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x/dist/cdn.min.js" defer></script>
+  <title><%= listing.service_name %> - Availability</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+    }
+
+    .page-wrapper {
+      max-width: 960px;
+      margin: 2rem auto;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1rem;
+      margin: 0.5rem 0 1rem;
+    }
+
+    a {
+      color: purple;
+      text-decoration: underline;
+      font-weight: bold;
+    }
+
+    .responsive {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      justify-content: center;
+      align-items: center;
+      margin-top: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .responsive {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .calendar-day {
+      background-color: #d4f8d4;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s ease;
+    }
+
+    .calendar-day:hover {
+      transform: scale(1.03);
+      background-color: #c8ecc8;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      background-color: #333;
+      border-radius: 50%;
+      position: absolute;
+      top: 8px;
+      left: 8px;
+    }
+
+    .times-container {
+      text-align: left;
+    }
+
+    .times-container h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      list-style-type: disc;
+      padding-left: 1.25rem;
+    }
+
+    .time-slot {
+      background-color: #eee;
+      border: 1px solid #aaa;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.95rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .time-slot:hover {
+      background-color: #d9b3ff;
+      color: white;
+    }
+
+    .line-through {
+      text-decoration: line-through;
+      color: #999;
+      font-size: 0.95rem;
+    }
+
+    .confirmation {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      background-color: #e0ffe0;
+      border: 1px solid #99cc99;
+      font-weight: bold;
+      color: #003300;
+    }
+
+    .unavailable-day {
+      background-color: #ffd4d4; /* light red */
+    }
+
+    .unavailable-day:hover {
+      background-color: #f5bcbc;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="page-wrapper" x-data="calendarComponent()" x-init="fetchAvailability()">
+    <h1><strong x-text="listing.seller_name"></strong>'s Availability</h1>
+    <p>Questions? Message <span x-text="listing.seller_name"></span> for inquiries.</p>
+    <a :href="`/message/${listing.listing_id}`">Message <span x-text="listing.seller_name"></span></a>
+
+    <div class="responsive">
+      <div class="calendar-grid">
+        <template x-for="(day, index) in days" :key="index">
+          <div 
+              class="calendar-day" 
+              :class="{ 'unavailable-day': day.times.every(t => t.is_booked) }" 
+              @click="selectDay(day)"
+            >
+
+            <div class="dot"></div>
+            <div x-text="day.label"></div>
+          </div>
+        </template>
+      </div>
+
+      <div class="times-container">
+        <template x-if="selectedDay">
+          <div>
+            <h2 x-text="'Times on ' + selectedDay.label"></h2>
+            <template x-if="selectedDay.times.length > 0">
+              <ul>
+                <template x-for="timeObj in selectedDay.times" :key="timeObj.availability_id">
+                <li class="mb-1">
+                  <template x-if="!timeObj.is_booked">
+                    <button 
+                      @click="bookTime(timeObj.availability_id)" 
+                      class="time-slot" 
+                      x-text="timeObj.time"
+                    ></button>
+                  </template>
+                  <template x-if="timeObj.is_booked">
+                    <span class="line-through text-gray-400" x-text="timeObj.time"></span>
+                  </template>
+                </li>
+              </template>
+              </ul>
+            </template>
+            <template x-if="selectedDay.times.length === 0">
+              <p>No available times.</p>
+            </template>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <div x-show="confirmation" class="confirmation">
+      <p x-text="confirmation"></p>
+    </div>
+  </div>
+
+  <script>
+    function calendarComponent() {
+      return {
+        listing: {
+          seller_name: "<%= listing.seller_name %>",
+          service_id: <%= listing.listing_id %>
+        },
+        days: [],
+        selectedDay: null,
+        confirmation: '',
+
+        fetchAvailability() {
+          fetch(`/api/availability/${this.listing.service_id}`)
+            .then(res => res.json())
+            .then(data => {
+              console.log("Fetched availability data:", data);
+              this.days = data;
+            });
+        },
+
+        selectDay(day) {
+          this.selectedDay = day;
+        },
+
+
+        bookTime(availabilityId) {
+          const confirmMsg = `Book this time?`;
+          if (!confirm(confirmMsg)) return;
+
+          fetch('/book', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              availabilityId,
+              userId: <%= typeof user_id !== 'undefined' ? JSON.stringify(user_id) : 'null' %>
+            })
+          })
+          .then(res => res.json())
+          .then(data => {
+            this.confirmation = data.message || 'Booking successful!';
+
+          
+            if (this.selectedDay && this.selectedDay.times) {
+              const timeToUpdate = this.selectedDay.times.find(t => t.availability_id === availabilityId);
+              if (timeToUpdate) {
+                timeToUpdate.is_booked = true;
+              }
+            }
+          })
+          .catch(err => {
+            console.error('Booking failed:', err);
+            this.confirmation = 'An error occurred while booking.';
+          });
+        }
+
+
+      }
+    }
+  </script>
+
+   <%- include('../partials/footer') %>
+</body>
+</html>

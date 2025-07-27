@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <%- include('../partials/header', { title: 'SwiftThrift' }) %>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x/dist/cdn.min.js" defer></script>
+    <title>login</title>
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHX65F1PNK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JHX65F1PNK');
+</script>
+
+
+<body>
+    <link rel="stylesheet" href="/authenticationStyles.css">
+    <div class="container">
+        <div class="login-section">
+            <h1>Welcome back!</h1>
+            <div x-data="loginForm()">
+                <form @submit.prevent="submitLogin">
+    
+                    <label for="email">SFSU email*</label>
+                    <input type="email" id="email" x-model="email" required>
+
+                    <label for="password">Password*</label>
+                    <input type="password" id="password" x-model="password" required>
+                    <p>Don't have an account? <a href="/signup">Sign up</a></p>
+                    <br> 
+
+                    <button type="submit">Sign in</button>
+                    <p x-show="errorMessage" x-text="errorMessage" class="error"></p>
+                </form>
+            </div>
+        </div>
+        <div class="image-section">
+            <img src="/images/aliGatorKun.png" alt="Friendly Alligator" class="alligator-image">
+        </div>
+    </div>
+    <div class="footer">
+        <!-- Footer content -->
+    </div>
+
+    <script>
+        function loginForm() {
+            return {
+                email: '',
+                password: '',
+                errorMessage: '',
+                // submitLogin() {
+                //     console.log("Submit function called");
+                //     console.log("Email:", this.email);
+                //     console.log("Password:", this.password);
+                //     fetch('/api/auth/login', {
+                //         method: 'POST',
+                //         headers: {
+                //             'Content-Type': 'application/json'
+                //         },
+                //         body: JSON.stringify({
+                //             email: this.email,
+                //             password: this.password
+                //         })
+                //     })
+                //     .then(response => {
+                //         console.log("Response received:", response);
+                //         return response.json();
+                //     })
+                //     .then(data => {
+                //         console.log("Data received:", data);
+                //         if (data.success) {
+                //             // window.location.href = '/profile';
+                //             const params = new URLSearchParams(window.location.search);
+                //             const redirect = params.get('redirect') || '/profile';
+                //             window.location.href = redirect;
+
+                //         } else {
+                //             this.errorMessage = data.message || 'Login failed';
+                //         }
+                //     })
+                //     .catch(error => {
+                //         console.error("Fetch error:", error);
+                //         this.errorMessage = 'An error occurred';
+                //     });
+                // }
+                submitLogin() {
+                    console.log("Submit function called");
+                    fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: this.email,
+                            password: this.password
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const params = new URLSearchParams(window.location.search);
+                            const redirect = params.get('redirect') || '/profile';
+                            window.location.href = redirect;
+                        } else {
+                            this.errorMessage = data.message || 'Login failed';
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Fetch error:", error);
+                        this.errorMessage = 'An error occurred';
+                    });
+                }
+
+            }
+        }
+    </script>
+</body>
+</html>

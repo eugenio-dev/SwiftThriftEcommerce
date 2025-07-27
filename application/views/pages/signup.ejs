@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <%- include('../partials/header', { title: 'SwiftThrift' }) %>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x/dist/cdn.min.js" defer></script>
+    <title>signup</title>
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHX65F1PNK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JHX65F1PNK');
+</script>
+
+<body>
+    <link rel="stylesheet" href="/authenticationStyles.css">
+    <div class="container">
+
+        <div class="auth-section">
+            <h1>Sign up</h1>
+            <div x-data="signupForm()">
+                <form @submit.prevent="submitSignup">
+                <label for="firstName">First name*</label>
+                <input type="text" id="firstName" x-model="firstName" required>
+
+                <label for="lastName">Last name*</label>
+                <input type="text" id="lastName" x-model="lastName" required>
+
+                <label for="email">SFSU email*</label>
+                <input type="email" id="email" x-model="email" required>
+
+                <label for="password">Password*</label>
+                <input type="password" id="password" x-model="password" required>
+
+                <label for="confirmpassword">Confirm Password*</label>
+                <input type="password" id="confirmpassword" x-model="confirmpassword" required>
+
+                <label for="termsCheckbox">
+                    <input type="checkbox" x-model="termsAcceptance" id="termsCheckbox">
+                    I accept the <a href="#">terms</a> for this website
+                </label>
+
+                <button type="submit">Create account</button>
+                <p x-show="errorMessage" x-text="errorMessage" class="error"></p>
+                </form>
+
+            </div>
+        </div>
+        <div class="image-section">
+            <img src="/images/aliGatorKun.png" alt="Friendly Alligator" class="alligator-image">
+        </div>
+    </div>
+
+    <div class="footer">
+        <!-- Footer content -->
+    </div>
+
+    <script>
+        function signupForm() {
+            return {
+                firstName: '',
+                lastName: '',
+                email: '',
+                password: '',
+                confirmpassword: '',
+                termsAcceptance: false,
+                errorMessage: '',
+                submitSignup() {
+                    console.log("Submit function called");
+                    console.log("First Name:", this.firstName);
+                    console.log("Last Name:", this.lastName);
+                    console.log("Email:", this.email);
+                    console.log("Password:", this.password);
+                    console.log("Confirm Password:", this.confirmpassword);
+                    console.log("Terms Checkbox:", this.termsAcceptance);
+
+                    // Email validation for SFSU email
+                    if (!this.email.endsWith('@sfsu.edu')) {
+                        this.errorMessage = 'Please use a valid SFSU email address';
+                        return;
+                    }
+
+                    fetch('/api/auth/signup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            firstName: this.firstName,
+                            lastName: this.lastName,
+                            email: this.email,
+                            password: this.password,
+                            confirmpassword: this.confirmpassword,
+                            termsAcceptance: this.termsAcceptance
+                        })
+                    })
+                        .then(response => {
+                            console.log("Response received:", response);
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log("Data received:", data);
+                            if (data.success) {
+                                window.location.href = '/profile';
+                            } else {
+                                this.errorMessage = data.message || 'Signup failed';
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Fetch error:", error);
+                            this.errorMessage = 'An error occurred';
+                        });
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
